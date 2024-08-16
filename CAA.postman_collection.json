@@ -1,0 +1,161 @@
+{
+	"info": {
+		"_postman_id": "bc0fd969-e9c0-4979-a9bc-0ff0fe19d61a",
+		"name": "CAA",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "2589148"
+	},
+	"item": [
+		{
+			"name": "Setup",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jwt = pm.response.json();\r",
+							"\r",
+							"pm.test(\"JWT should not be empty\", () => {\r",
+							"    pm.expect(jwt).to.not.be.empty;\r",
+							"});\r",
+							"\r",
+							"pm.globals.set(\"caa_jwt\", jwt);\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.environment.set(\"base_url\", \"localhost:7135\")"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://{{base_url}}/api/Jwt",
+					"protocol": "https",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"Jwt"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Wrong token",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.environment.set(\"base_url\", \"localhost:7135\")"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Call to a secured API without a valid token should give 401\", () => {\r",
+							"    pm.expect(pm.response.code).to.eql(401);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Round trip should take less than 200ms\", () => {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(200);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer these_are_not_the_credentials_you_are_looking_for",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://{{base_url}}/api/Flights",
+					"protocol": "https",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"Flights"
+					],
+					"query": [
+						{
+							"key": "",
+							"value": "",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Flights",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response code should be 200\", () => {\r",
+							"    pm.expect(pm.response.code).to.eql(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Round trip should take less than 200ms\", () => {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(200);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{caa_jwt}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://{{base_url}}/api/Flights",
+					"protocol": "https",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"Flights"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
