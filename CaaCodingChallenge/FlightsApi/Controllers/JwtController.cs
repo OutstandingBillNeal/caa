@@ -11,11 +11,16 @@ namespace FlightsApi.Controllers
     [ApiController]
     public class JwtController : ControllerBase
     {
-        private IConfiguration _config;
+        private readonly string _jwtIssuer;
+        private readonly string _jwtKey;
 
         public JwtController(IConfiguration config)
         {
-            _config = config;
+            Guard.Against.Null(config);
+            _jwtIssuer = config["Jwt:Issuer"];
+            _jwtKey = config["Jwt:Key"];
+            Guard.Against.Null(_jwtIssuer);
+            Guard.Against.Null(_jwtKey);
         }
 
         [HttpGet]
@@ -27,12 +32,7 @@ namespace FlightsApi.Controllers
 
         private string GenerateJwt()
         {
-            var jwtIssuer = _config["Jwt:Issuer"];
-            var jwtKey = _config["Jwt:Key"];
-            Guard.Against.Null(jwtIssuer);
-            Guard.Against.Null(jwtKey);
-
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtKey));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
             var claims = new[] {
@@ -41,8 +41,8 @@ namespace FlightsApi.Controllers
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
 
-            var token = new JwtSecurityToken(jwtIssuer,
-                jwtIssuer,
+            var token = new JwtSecurityToken(_jwtIssuer,
+                _jwtIssuer,
                 claims,
                 expires: DateTime.Now.AddMinutes(30),
                 signingCredentials: credentials);
