@@ -3,11 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.10.35004.147
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlightsApi", "FlightsApi\FlightsApi.csproj", "{5B182FE1-9DD9-4208-8959-A21F940D5521}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FlightsApi", "FlightsApi\FlightsApi.csproj", "{5B182FE1-9DD9-4208-8959-A21F940D5521}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{6E34B328-C292-4A3C-91CC-AB1FD5311CDD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlightsApiTests", "FlightsApiTests\FlightsApiTests.csproj", "{16CD7188-0DF9-44D6-BDD9-ECD730CBAB35}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FlightsApiTests", "FlightsApiTests\FlightsApiTests.csproj", "{16CD7188-0DF9-44D6-BDD9-ECD730CBAB35}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlightsData", "FlightsData\FlightsData.csproj", "{CA6C42F9-9DFD-41D1-97FD-E7527D8148DE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,6 +25,10 @@ Global
 		{16CD7188-0DF9-44D6-BDD9-ECD730CBAB35}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{16CD7188-0DF9-44D6-BDD9-ECD730CBAB35}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{16CD7188-0DF9-44D6-BDD9-ECD730CBAB35}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CA6C42F9-9DFD-41D1-97FD-E7527D8148DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CA6C42F9-9DFD-41D1-97FD-E7527D8148DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CA6C42F9-9DFD-41D1-97FD-E7527D8148DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CA6C42F9-9DFD-41D1-97FD-E7527D8148DE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

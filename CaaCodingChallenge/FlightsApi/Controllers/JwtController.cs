@@ -17,8 +17,10 @@ namespace FlightsApi.Controllers
         public JwtController(IConfiguration config)
         {
             Guard.Against.Null(config);
+#pragma warning disable CS8601 // Possible null reference assignment. We just checked this.
             _jwtIssuer = config["Jwt:Issuer"];
             _jwtKey = config["Jwt:Key"];
+#pragma warning restore CS8601 // Possible null reference assignment.
             Guard.Against.Null(_jwtIssuer);
             Guard.Against.Null(_jwtKey);
         }
