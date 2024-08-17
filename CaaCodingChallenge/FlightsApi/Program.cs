@@ -3,7 +3,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Ardalis.GuardClauses;
 using FlightsData;
-using UnitsOfWork.GetFlights;
+using UnitsOfWork;
 
 var builder = WebApplication.CreateBuilder(args);
 

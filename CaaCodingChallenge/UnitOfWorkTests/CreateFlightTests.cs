@@ -2,7 +2,7 @@ using FlightsData;
 using FlightsData.Models;
 using Microsoft.EntityFrameworkCore;
 using Moq;
-using UnitsOfWork.CreateFlight;
+using UnitsOfWork;
 
 namespace UnitOfWorkTests;
 

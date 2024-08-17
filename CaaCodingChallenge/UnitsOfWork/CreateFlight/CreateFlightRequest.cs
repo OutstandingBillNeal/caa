@@ -1,11 +1,10 @@
 ﻿using FlightsData.Models;
 using MediatR;
 
-namespace UnitsOfWork.CreateFlight
+namespace UnitsOfWork;
+
+public class CreateFlightRequest
+    : IRequest<Flight?>
 {
-    public class CreateFlightRequest
-        : IRequest<Flight?>
-    {
-        public required Flight Flight { get; set; }
-    }
+    public required Flight Flight { get; set; }
 }

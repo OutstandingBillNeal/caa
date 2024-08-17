@@ -1,9 +1,8 @@
-﻿using FlightsData;
-using FlightsData.Models;
+﻿using FlightsData.Models;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using UnitsOfWork.GetFlights;
+using UnitsOfWork;
 
 namespace FlightsApi.Controllers
 {
@@ -17,38 +16,46 @@ namespace FlightsApi.Controllers
 
         // GET: api/<FlightsController>
         [HttpGet]
-        public async Task<IEnumerable<Flight>> Get()
+        public async Task<ActionResult<IEnumerable<Flight>>> Get()
         {
             var request = new GetFlightsRequest();
             var result = await _mediator.Send(request, CancellationToken.None);
-            return result;
+            return new JsonResult(result);
         }
 
         // GET api/<FlightsController>/5
         [HttpGet("{id}")]
-        public Flight Get(int id)
+        public async Task<ActionResult<Flight>> Get(int id)
         {
-            return GetDummyFlight();
+            var request = new GetFlightByIdRequest { Id = id };
+            var result = await _mediator.Send(request, CancellationToken.None);
+
+            return result == null
+                ? new NotFoundResult()
+                : new JsonResult(result);
         }
 
         // POST api/<FlightsController>
         [HttpPost]
-        public Flight Post([FromBody] string value)
+        public async Task<ActionResult<Flight>> Post([FromBody] Flight value)
         {
-            return GetDummyFlight();
+            var request = new CreateFlightRequest { Flight = value };
+            var result = await _mediator.Send(request, CancellationToken.None);
+            return new JsonResult(result);
         }
 
         // PUT api/<FlightsController>/5
         [HttpPut("{id}")]
-        public Flight Put(int id, [FromBody] string value)
+        public async Task<ActionResult<Flight>> Put(int id, [FromBody] string value)
         {
             return GetDummyFlight();
         }
 
         // DELETE api/<FlightsController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
+            return new JsonResult(false);
         }
 
         private Flight GetDummyFlight()
