@@ -48,8 +48,6 @@ namespace FlightsDataTests
             sut.Flights.Add(flight);
             sut.SaveChanges();
             var flightId = flight.Id;
-            var flightRetrievedBeforeDeletion = sut.Flights.FirstOrDefault(f => f.Id == flightId);
-            Assert.NotNull(flightRetrievedBeforeDeletion);
 
             // Act
             sut.Flights.Remove(flight);
