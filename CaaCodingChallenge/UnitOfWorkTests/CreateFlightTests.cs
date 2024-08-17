@@ -22,23 +22,6 @@ public class CreateFlightTests
 #pragma warning restore CS8604 // Possible null reference argument.
     }
 
-    //[Fact]
-    //public async Task Flight_is_added_and_saved()
-    //{
-    //    // Arrange
-    //    var dbContextMock = new Mock<IFlightsContext>();
-    //    dbContextMock.Setup(m => m.Flights).Returns(GetEmptyQueryableMockDbSet<Flight>());
-    //    var sut = new CreateFlightHandler(dbContextMock.Object);
-    //    var request = new CreateFlightRequest { Flight = GetFlight() };
-
-    //    // Act
-    //    await sut.Handle(request, CancellationToken.None);
-
-    //    // Assert
-    //    dbContextMock.Verify(m => m.Flights.Add(It.IsAny<Flight>()), Times.Once);
-    //    dbContextMock.Verify(m => m.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
-    //}
-
     [Fact]
     public async Task Flight_is_added()
     {

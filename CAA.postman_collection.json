@@ -41,14 +41,14 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "https://{{base_url}}/api/Jwt",
+					"raw": "https://{{base_url}}/api/jwt",
 					"protocol": "https",
 					"host": [
 						"{{base_url}}"
 					],
 					"path": [
 						"api",
-						"Jwt"
+						"jwt"
 					]
 				}
 			},
@@ -94,14 +94,14 @@
 					}
 				],
 				"url": {
-					"raw": "https://{{base_url}}/api/Flights",
+					"raw": "https://{{base_url}}/api/flights",
 					"protocol": "https",
 					"host": [
 						"{{base_url}}"
 					],
 					"path": [
 						"api",
-						"Flights"
+						"flights"
 					],
 					"query": [
 						{
@@ -144,14 +144,14 @@
 					}
 				],
 				"url": {
-					"raw": "https://{{base_url}}/api/Flights",
+					"raw": "https://{{base_url}}/api/flights",
 					"protocol": "https",
 					"host": [
 						"{{base_url}}"
 					],
 					"path": [
 						"api",
-						"Flights"
+						"flights"
 					]
 				}
 			},

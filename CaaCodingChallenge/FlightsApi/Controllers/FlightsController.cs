@@ -1,28 +1,27 @@
 ﻿using FlightsData;
 using FlightsData.Models;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using UnitsOfWork.GetFlights;
 
 namespace FlightsApi.Controllers
 {
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class FlightsController : ControllerBase
+    public class FlightsController(IMediator mediator)
+        : ControllerBase
     {
-        private readonly IFlightsContext _flightsContext;
-
-        public FlightsController(IFlightsContext flightsContext)
-        {
-            _flightsContext = flightsContext;
-        }
+        private readonly IMediator _mediator = mediator;
 
         // GET: api/<FlightsController>
         [HttpGet]
-        public IEnumerable<Flight> Get()
+        public async Task<IEnumerable<Flight>> Get()
         {
-            var x = _flightsContext.Flights.FirstOrDefault(f => f.Id == 1);
-            return [GetDummyFlight()];
+            var request = new GetFlightsRequest();
+            var result = await _mediator.Send(request, CancellationToken.None);
+            return result;
         }
 
         // GET api/<FlightsController>/5

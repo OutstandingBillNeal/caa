@@ -3,6 +3,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Ardalis.GuardClauses;
 using FlightsData;
+using UnitsOfWork.GetFlights;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,7 +33,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<IFlightsContext, FlightsContext>();
-builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<Program>());
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<GetFlightsHandler>());
 
 var app = builder.Build();
 
