@@ -1,4 +1,5 @@
-﻿using FlightsData.Models;
+﻿using FlightsData;
+using FlightsData.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,10 +10,18 @@ namespace FlightsApi.Controllers
     [ApiController]
     public class FlightsController : ControllerBase
     {
+        private readonly IFlightsContext _flightsContext;
+
+        public FlightsController(IFlightsContext flightsContext)
+        {
+            _flightsContext = flightsContext;
+        }
+
         // GET: api/<FlightsController>
         [HttpGet]
         public IEnumerable<Flight> Get()
         {
+            var x = _flightsContext.Flights.FirstOrDefault(f => f.Id == 1);
             return [GetDummyFlight()];
         }
 

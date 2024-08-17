@@ -1,13 +1,27 @@
-﻿namespace FlightsData.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
+namespace FlightsData.Models;
+
+[Index(nameof(FlightNumber), IsUnique = true)]
 public class Flight
 {
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; set; }
-    public string FlightNumber { get; set; }
-    public string Airline { get; set; }
-    public string DepartureAirport { get; set; }
-    public string ArrivalAirport { get; set; }
-    public DateTimeOffset DepartureTime { get; set; }
-    public DateTimeOffset ArrivalTime { get; set; }
-    public FlightStatus Status { get; set; }
+    [Required]
+    public required string FlightNumber { get; set; }
+    [Required]
+    public required string Airline { get; set; }
+    [Required]
+    public required string DepartureAirport { get; set; }
+    [Required]
+    public required string ArrivalAirport { get; set; }
+    [Required]
+    public required DateTimeOffset DepartureTime { get; set; }
+    [Required]
+    public required DateTimeOffset ArrivalTime { get; set; }
+    [Required]
+    public required FlightStatus Status { get; set; }
 }
