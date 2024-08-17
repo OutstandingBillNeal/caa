@@ -7,5 +7,6 @@ namespace FlightsData
     {
         string DbPath { get; }
         DbSet<Flight> Flights { get; set; }
+        Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
     }
 }

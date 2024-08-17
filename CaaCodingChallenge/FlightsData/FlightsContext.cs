@@ -3,7 +3,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FlightsData;
 
-public class FlightsContext : DbContext, IFlightsContext
+public class FlightsContext
+    : DbContext, IFlightsContext
 {
     public DbSet<Flight> Flights { get; set; }
 
