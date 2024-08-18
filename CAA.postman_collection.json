@@ -30,7 +30,7 @@
 					"listen": "prerequest",
 					"script": {
 						"exec": [
-							"pm.environment.set(\"base_url\", \"localhost:7135\")"
+							"pm.globals.set(\"base_url\", \"localhost:7135\")"
 						],
 						"type": "text/javascript",
 						"packages": {}
@@ -115,7 +115,7 @@
 			"response": []
 		},
 		{
-			"name": "Get Flights",
+			"name": "Get all flights",
 			"event": [
 				{
 					"listen": "test",
@@ -152,6 +152,170 @@
 					"path": [
 						"api",
 						"flights"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Flight with valid id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response code should be 200\", () => {\r",
+							"    pm.expect(pm.response.code).to.eql(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Round trip should take less than 200ms\", () => {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(200);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{caa_jwt}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://{{base_url}}/api/flights/11",
+					"protocol": "https",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"flights",
+						"11"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Flight",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{caa_jwt}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": 1,\r\n    \"flightNumber\": \"a123\",\r\n    \"airline\": \"airline for a flight created in Postman\",\r\n    \"departureAirport\": \"c\",\r\n    \"arrivalAirport\": \"b\",\r\n    \"departureTime\": \"2024-08-17T12:11:44.5419434+12:00\",\r\n    \"arrivalTime\": \"2024-08-17T12:11:44.5418486+12:00\",\r\n    \"status\": 0\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://{{base_url}}/api/flights",
+					"protocol": "https",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"flights"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Flight using invalid id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response code should be 404\", () => {\r",
+							"    pm.expect(pm.response.code).to.eql(404);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Round trip should take less than 200ms\", () => {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(200);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{caa_jwt}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://{{base_url}}/api/flights/1111111",
+					"protocol": "https",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"flights",
+						"1111111"
+					],
+					"query": [
+						{
+							"key": "",
+							"value": "",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Flight",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{caa_jwt}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"flightNumber\": \"flight11\",\r\n    \"airline\": \"airline for a flight updated in Postman\",\r\n    \"departureAirport\": \"departureAirport for a flight updated in Postman\",\r\n    \"arrivalAirport\": \"arrivalAirport for a flight updated in Postman\",\r\n    \"departureTime\": \"2024-08-17T12:11:44.5419434+12:00\",\r\n    \"arrivalTime\": \"2024-08-17T12:11:44.5418486+12:00\",\r\n    \"status\": 0\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://{{base_url}}/api/flights/11",
+					"protocol": "https",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"flights",
+						"11"
 					]
 				}
 			},
