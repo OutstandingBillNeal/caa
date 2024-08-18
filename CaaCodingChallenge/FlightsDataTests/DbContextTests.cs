@@ -1,5 +1,6 @@
 using FlightsData;
 using FlightsData.Models;
+using TestHelpers;
 
 namespace FlightsDataTests
 {
@@ -11,7 +12,7 @@ namespace FlightsDataTests
             // Arrange
             var flightNumber = Guid.NewGuid().ToString();
             var sut = new FlightsContext();
-            var flight = GetFlight();
+            var flight = Any.Flight();
             flight.FlightNumber = flightNumber;
             sut.Flights.Add(flight);
 
@@ -28,8 +29,8 @@ namespace FlightsDataTests
         {
             // Arrange
             var sut = new FlightsContext();
-            var flight = GetFlight();
-            Assert.Equal(0, flight.Id);
+            var flight = Any.Flight();
+            flight.Id = 0;
             sut.Flights.Add(flight);
 
             // Act
@@ -44,7 +45,7 @@ namespace FlightsDataTests
         {
             // Arrange
             var sut = new FlightsContext();
-            var flight = GetFlight();
+            var flight = Any.Flight();
             sut.Flights.Add(flight);
             sut.SaveChanges();
             var flightId = flight.Id;
@@ -63,7 +64,7 @@ namespace FlightsDataTests
         {
             // Arrange
             var sut = new FlightsContext();
-            var flight = GetFlight();
+            var flight = Any.Flight();
             var initialFlightNumber = Guid.NewGuid().ToString();
             flight.FlightNumber = initialFlightNumber;
             sut.Flights.Add(flight);
@@ -80,7 +81,7 @@ namespace FlightsDataTests
             Assert.Equal(updatedFlightNumber, flightRetrievedAfterUpdate.FlightNumber);
         }
 
-        private Flight GetFlight()
+        private Flight GetFlight1()
         {
             return new Flight
             {

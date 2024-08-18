@@ -7,10 +7,6 @@ public class CreateFlightValidator
 {
     public CreateFlightValidator()
     {
-        RuleFor(r => r)
-            .NotNull();
-        RuleFor(r => r.Flight)
-            .NotNull();
         RuleFor(r => r.Flight.Id)
             .Equal(0)
             .WithMessage("must be zero, if supplied");

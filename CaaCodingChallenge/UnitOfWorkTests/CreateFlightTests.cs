@@ -3,6 +3,7 @@ using FlightsData.Models;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using UnitsOfWork;
+using TestHelpers;
 
 namespace UnitOfWorkTests;
 
@@ -28,7 +29,7 @@ public class CreateFlightTests
         // Arrange
         var dbContext = new FlightsContext();
         var sut = new CreateFlightHandler(dbContext);
-        var request = new CreateFlightRequest { Flight = GetFlight() };
+        var request = new CreateFlightRequest { Flight = Any.Flight() };
         var numberOfFlightsBefore = dbContext.Flights.Count();
 
         // Act
@@ -39,7 +40,7 @@ public class CreateFlightTests
         Assert.Equal(numberOfFlightsBefore + 1, numberOfFlightsAfter);
     }
 
-    private Flight GetFlight()
+    private Flight GetFlight1()
     {
         return new Flight
         {

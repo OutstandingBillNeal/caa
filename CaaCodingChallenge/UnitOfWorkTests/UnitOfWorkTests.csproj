@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\FlightsData\FlightsData.csproj" />
+    <ProjectReference Include="..\TestHelpers\TestHelpers.csproj" />
     <ProjectReference Include="..\UnitsOfWork\UnitsOfWork.csproj" />
   </ItemGroup>
 

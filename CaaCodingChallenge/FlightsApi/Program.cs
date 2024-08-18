@@ -5,7 +5,6 @@ using Ardalis.GuardClauses;
 using FlightsData;
 using UnitsOfWork;
 using FluentValidation;
-using MediatR;
 
 var builder = WebApplication.CreateBuilder(args);
 
