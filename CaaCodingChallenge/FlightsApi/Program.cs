@@ -4,6 +4,8 @@ using System.Text;
 using Ardalis.GuardClauses;
 using FlightsData;
 using UnitsOfWork;
+using FluentValidation;
+using MediatR;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,7 +35,11 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<IFlightsContext, FlightsContext>();
-builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<GetFlightsHandler>());
+builder.Services.AddValidatorsFromAssemblyContaining<CreateFlightValidator>();
+builder.Services.AddMediatR(cfg =>
+{
+    cfg.RegisterServicesFromAssemblyContaining<GetFlightsHandler>();
+});
 
 var app = builder.Build();
 
