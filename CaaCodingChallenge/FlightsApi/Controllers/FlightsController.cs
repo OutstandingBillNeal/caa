@@ -25,12 +25,15 @@ namespace FlightsApi.Controllers;
 [Route("api/[controller]")]
 [ApiController]
 public class FlightsController(
-    IMediator mediator,
-    IValidator<CreateFlightRequest> createFlightValidator)
+    IMediator mediator
+    , IValidator<CreateFlightRequest> createFlightValidator
+    , IValidator<UpdateFlightRequest> updateFlightValidator
+    )
     : ControllerBase
 {
     private readonly IMediator _mediator = mediator;
     private readonly IValidator<CreateFlightRequest> _createFlightValidator = createFlightValidator;
+    private readonly IValidator<UpdateFlightRequest> _updateFlightValidator = updateFlightValidator;
 
     // GET: api/<FlightsController>
     [HttpGet]
@@ -72,9 +75,22 @@ public class FlightsController(
 
     // PUT api/<FlightsController>/5
     [HttpPut("{id}")]
-    public async Task<ActionResult<Flight>> Put(int id, [FromBody] string value)
+    public async Task<ActionResult<Flight>> Put(int id, [FromBody] Flight value)
     {
-        return GetDummyFlight();
+        var request = new UpdateFlightRequest { Flight = value };
+        request.Flight.Id = id; // Just to be sure
+        var validationResult = await _updateFlightValidator.ValidateAsync(request);
+
+        if (validationResult != null && !validationResult.IsValid)
+        {
+            var message = GetValidationMessage(validationResult);
+            return BadRequest(message);
+        }
+
+        var result = await _mediator.Send(request, CancellationToken.None);
+        return result == null
+            ? NotFound()
+            : new JsonResult(result);
     }
 
     // DELETE api/<FlightsController>/5

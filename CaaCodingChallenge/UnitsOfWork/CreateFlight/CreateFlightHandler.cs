@@ -6,15 +6,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace UnitsOfWork;
 
-public class CreateFlightHandler
+public class CreateFlightHandler(IFlightsContext context)
     : IRequestHandler<CreateFlightRequest, Flight?>
 {
-    private readonly IFlightsContext _context;
+    private readonly IFlightsContext _context = context;
 
-    public CreateFlightHandler(IFlightsContext context)
-    {
-        _context = context;
-    }
     public async Task<Flight?> Handle(CreateFlightRequest request, CancellationToken cancellationToken)
     {
         Guard.Against.Null(request);

@@ -4,7 +4,7 @@ using MediatR;
 namespace UnitsOfWork;
 
 public class UpdateFlightRequest
-    : IRequest<Flight>
+    : IRequest<Flight?>
 {
     public Flight Flight { get; set; }
 }
