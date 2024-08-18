@@ -13,10 +13,14 @@ public class UpdateFlightHandler(IFlightsContext context)
 
     public async Task<Flight?> Handle(UpdateFlightRequest request, CancellationToken cancellationToken)
     {
+        Guard.Against.Null(_context);
+        Guard.Against.Null(_context.Flights);
         Guard.Against.Null(request);
         Guard.Against.Null(request.Flight);
 
-        var retrievedFlight = _context.Flights.FirstOrDefault(f => f.Id == request.Flight.Id);
+        var retrievedFlight = await _context
+            .Flights
+            .FirstOrDefaultAsync(f => f.Id == request.Flight.Id, cancellationToken);
 
         if (retrievedFlight == null)
         {
@@ -32,7 +36,10 @@ public class UpdateFlightHandler(IFlightsContext context)
         retrievedFlight.Status = request.Flight.Status;
 
         await _context.SaveChangesAsync(cancellationToken);
-        var updatedFlight = await _context.Flights.FirstOrDefaultAsync(f => f.Id == request.Flight.Id);
+        var updatedFlight = await _context
+            .Flights
+            .FirstOrDefaultAsync(f => f.Id == request.Flight.Id, cancellationToken);
+
         return updatedFlight;
     }
 }

@@ -1,4 +1,5 @@
-﻿using FlightsData;
+﻿using Ardalis.GuardClauses;
+using FlightsData;
 using FlightsData.Models;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -12,6 +13,9 @@ public class GetFlightsHandler(IFlightsContext context)
 
     public async Task<IEnumerable<Flight>> Handle(GetFlightsRequest request, CancellationToken cancellationToken)
     {
+        Guard.Against.Null(_context);
+        Guard.Against.Null(_context.Flights);
+
         return await _context.Flights.ToListAsync(cancellationToken);
     }
 }

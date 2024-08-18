@@ -25,6 +25,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\FlightsApi\FlightsApi.csproj" />
+    <ProjectReference Include="..\TestHelpers\TestHelpers.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -10,7 +10,8 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 /* 
 A note on validation
 ====================
-Jeremy Skinner - the author of FluentValidation - writes (https://github.com/FluentValidation/FluentValidation/issues/1960)
+Jeremy Skinner - the author of FluentValidation - writes
+(https://github.com/FluentValidation/FluentValidation/issues/1960)
 "We recommend using a manual validation approach with ASP.NET".
 
 In my own experience, we used to be able to have validation run 
@@ -25,11 +26,10 @@ namespace FlightsApi.Controllers;
 [Route("api/[controller]")]
 [ApiController]
 public class FlightsController(
-    IMediator mediator
-    , IValidator<CreateFlightRequest> createFlightValidator
-    , IValidator<UpdateFlightRequest> updateFlightValidator
-    )
-    : ControllerBase
+        IMediator mediator
+        , IValidator<CreateFlightRequest> createFlightValidator
+        , IValidator<UpdateFlightRequest> updateFlightValidator
+    ) : ControllerBase
 {
     private readonly IMediator _mediator = mediator;
     private readonly IValidator<CreateFlightRequest> _createFlightValidator = createFlightValidator;
@@ -97,12 +97,12 @@ public class FlightsController(
     [HttpDelete("{id}")]
     public async Task<ActionResult> Delete(int id)
     {
-        return new JsonResult(false);
-    }
+        var request = new DeleteFlightRequest { Id = id };
+        var result = await _mediator.Send(request);
 
-    private Flight GetDummyFlight()
-    {
-        return new Flight { Id = 1, Airline = "a", ArrivalAirport = "b", ArrivalTime = DateTimeOffset.Now, DepartureAirport = "c", DepartureTime = DateTimeOffset.Now, FlightNumber = "d", Status = FlightStatus.Scheduled };
+        return result.Success
+            ? Ok(result)
+            : NotFound();
     }
 
     private static string GetValidationMessage(ValidationResult validationResult)
