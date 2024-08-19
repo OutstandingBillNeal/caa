@@ -42,17 +42,23 @@ builder.Services.AddMediatR(cfg =>
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
+var useSwagger = true || app.Environment.IsDevelopment();
+var useExceptionHandler = true || !app.Environment.IsDevelopment();
+
+if (useSwagger)
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
+if (useExceptionHandler && false)
+{
+    app.UseExceptionHandler("/error");
+}
+
 app.UseHttpsRedirection();
 app.UseRouting();
 app.UseAuthorization();
-app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();
