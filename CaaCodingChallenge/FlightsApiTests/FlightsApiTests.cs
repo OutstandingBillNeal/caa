@@ -1,6 +1,8 @@
 ﻿using FlightsApi.Controllers;
+using FlightsData.Models;
 using FluentValidation;
 using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using Moq;
 using TestHelpers;
 using UnitsOfWork;
@@ -14,10 +16,12 @@ public class FlightsApiTests
     private readonly Mock<IValidator<UpdateFlightRequest>> updateFlightValidator = new();
 
     [Fact]
-    public async Task GetFlights_sends_mediator_request()
+    public async Task GetFlights_returns_values_as_JsonResult_with_200()
     {
         // Arrange
-        var mediatorResult = new[] { Any.Flight(), Any.Flight() };
+        var flight1 = Any.Flight();
+        var flight2 = Any.Flight();
+        var mediatorResult = new[] { flight1, flight2 };
         _mediator
             .Setup(m => m.Send(It.IsAny<GetFlightsRequest>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(mediatorResult);
@@ -26,9 +30,23 @@ public class FlightsApiTests
         var result = await Sut.Get();
 
         // Assert
-        Assert.Equal(new JsonResult(mediatorResult), result);
+        Assert.NotNull(result);
+        Assert.NotNull(result.Result);
+        Assert.IsType<JsonResult>(result.Result);
+        var jsonResult = (JsonResult)result.Result;
+        Assert.NotNull(jsonResult);
+        Assert.NotNull(jsonResult.Value);
+        Assert.IsAssignableFrom<IEnumerable<Flight>>(jsonResult.Value);
+        var returnedFlights = (IEnumerable<Flight>)jsonResult.Value;
+        var returnedFlight1 = returnedFlights.FirstOrDefault(f => f.FlightNumber == flight1.FlightNumber);
+        var returnedFlight2 = returnedFlights.FirstOrDefault(f => f.FlightNumber == flight2.FlightNumber);
+        Assert.NotNull(returnedFlight1);
+        Assert.NotNull(returnedFlight2);
+        Assert.Equal(flight1, returnedFlight1);
+        Assert.Equal(flight2, returnedFlight2);
     }
 
     private FlightsController Sut
-        => new FlightsController(_mediator.Object, createFlightValidator.Object, updateFlightValidator.Object);
+        => new(_mediator.Object, createFlightValidator.Object, updateFlightValidator.Object);
+
 }
