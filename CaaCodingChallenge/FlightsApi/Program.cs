@@ -43,6 +43,7 @@ builder.Services.AddMediatR(cfg =>
 });
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
+
 var app = builder.Build();
 
 // Configure these two as desired
@@ -65,6 +66,7 @@ app.UseRouting();
 app.UseAuthorization();
 app.MapControllers();
 app.UseExceptionHandler();
+app.UseMiddleware<RequestLoggingMiddleware>();
 
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Debug()
