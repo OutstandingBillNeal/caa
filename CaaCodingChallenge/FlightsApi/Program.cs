@@ -5,6 +5,8 @@ using Ardalis.GuardClauses;
 using FlightsData;
 using UnitsOfWork;
 using FluentValidation;
+using FlightsApi.Middleware;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,7 +41,8 @@ builder.Services.AddMediatR(cfg =>
 {
     cfg.RegisterServicesFromAssemblyContaining<GetFlightsHandler>();
 });
-
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddProblemDetails();
 var app = builder.Build();
 
 // Configure these two as desired
@@ -61,5 +64,13 @@ app.UseHttpsRedirection();
 app.UseRouting();
 app.UseAuthorization();
 app.MapControllers();
+app.UseExceptionHandler();
+
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Debug()
+    .WriteTo.Console()
+    .CreateLogger();
+
+Log.Information("Starting");
 
 app.Run();
