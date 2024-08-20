@@ -4,9 +4,7 @@ using FluentValidation.Results;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Net.Mime;
 using UnitsOfWork;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 /* 
 A note on validation

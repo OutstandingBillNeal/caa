@@ -3,7 +3,7 @@ using MediatR;
 using Ardalis.GuardClauses;
 using Microsoft.EntityFrameworkCore;
 
-namespace UnitsOfWork.DeleteFlight;
+namespace UnitsOfWork;
 
 public class DeleteFlightHandler(IFlightsContext context)
     : IRequestHandler<DeleteFlightRequest, DeleteFlightResponse>

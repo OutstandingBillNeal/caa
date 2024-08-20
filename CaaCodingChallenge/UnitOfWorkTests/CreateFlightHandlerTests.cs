@@ -7,7 +7,7 @@ using TestHelpers;
 
 namespace UnitOfWorkTests;
 
-public class CreateFlightTests
+public class CreateFlightHandlerTests
 {
     [Fact]
     public async Task Throws_when_request_is_null()
@@ -29,7 +29,9 @@ public class CreateFlightTests
         // Arrange
         var dbContext = new FlightsContext();
         var sut = new CreateFlightHandler(dbContext);
-        var request = new CreateFlightRequest { Flight = Any.Flight() };
+        var flight = Any.Flight();
+        flight.Id = 0;
+        var request = new CreateFlightRequest { Flight = flight };
         var numberOfFlightsBefore = dbContext.Flights.Count();
 
         // Act
@@ -38,20 +40,10 @@ public class CreateFlightTests
         // Assert
         var numberOfFlightsAfter = dbContext.Flights.Count();
         Assert.Equal(numberOfFlightsBefore + 1, numberOfFlightsAfter);
-    }
-
-    private Flight GetFlight1()
-    {
-        return new Flight
-        {
-            Airline = "airline",
-            ArrivalAirport = "arrival airport",
-            ArrivalTime = DateTimeOffset.Now,
-            DepartureAirport = "departure airport",
-            DepartureTime = DateTimeOffset.Now,
-            FlightNumber = "flight number",
-            Status = FlightStatus.Scheduled
-        };
+        
+        // Tidy up
+        dbContext.Flights.Remove(flight);
+        dbContext.SaveChanges();
     }
 
     private static DbSet<T> GetEmptyQueryableMockDbSet<T>() where T : class
