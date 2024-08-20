@@ -6,5 +6,5 @@ namespace UnitsOfWork;
 public class UpdateFlightRequest
     : IRequest<Flight?>
 {
-    public Flight Flight { get; set; }
+    public required Flight Flight { get; set; }
 }

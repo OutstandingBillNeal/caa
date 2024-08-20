@@ -18,5 +18,7 @@ public class CreateFlightValidator
             .NotEmpty();
         RuleFor(r => r.Flight.ArrivalAirport)
             .NotEmpty();
+        RuleFor(r => r.Flight.Status)
+            .IsInEnum();
     }
 }

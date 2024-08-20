@@ -4,7 +4,7 @@ using MediatR;
 namespace UnitsOfWork;
 
 public class GetFlightByIdRequest
-    : IRequest<Flight>
+    : IRequest<Flight?>
 {
     public int Id { get; set; }
 }

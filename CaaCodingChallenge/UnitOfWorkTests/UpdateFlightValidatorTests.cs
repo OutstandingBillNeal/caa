@@ -26,92 +26,71 @@ public class UpdateFlightValidatorTests
         Assert.NotNull(flightIdError);
     }
 
-    [Fact]
-    public void FlightNumber_must_not_be_empty()
+    [Theory]
+    [MemberData(nameof(NullOrEmptyStrings))]
+    public void FlightNumber_must_not_be_null_or_empty(string nullOrEmptyValue)
     {
         // Arrange
         var flight = Any.Flight();
-        flight.FlightNumber = string.Empty;
+        flight.FlightNumber = nullOrEmptyValue;
 
         AssertNullOrEmptyError(flight, nameof(Flight.FlightNumber));
     }
 
-    [Fact]
-    public void FlightNumber_must_not_be_null()
+    [Theory]
+    [MemberData(nameof(NullOrEmptyStrings))]
+    public void Airline_must_not_be_null_or_empty(string nullOrEmptyValue)
     {
         // Arrange
         var flight = Any.Flight();
-#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.  Actually, you can, apparently.
-        flight.FlightNumber = null;
-#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
-
-        AssertNullOrEmptyError(flight, nameof(Flight.FlightNumber));
-    }
-
-    [Fact]
-    public void Airline_must_not_be_empty()
-    {
-        // Arrange
-        var flight = Any.Flight();
-        flight.Airline = string.Empty;
+        flight.Airline = nullOrEmptyValue;
 
         AssertNullOrEmptyError(flight, nameof(Flight.Airline));
     }
 
-    [Fact]
-    public void Airline_must_not_be_null()
+    [Theory]
+    [MemberData(nameof(NullOrEmptyStrings))]
+    public void DepartureAirport_must_not_be_null_or_empty(string nullOrEmptyValue)
     {
         // Arrange
         var flight = Any.Flight();
-#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.  Actually, you can, apparently.
-        flight.Airline = null;
-#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
-
-        AssertNullOrEmptyError(flight, nameof(Flight.Airline));
-    }
-
-    [Fact]
-    public void DepartureAirport_must_not_be_empty()
-    {
-        // Arrange
-        var flight = Any.Flight();
-        flight.DepartureAirport = string.Empty;
+        flight.DepartureAirport = nullOrEmptyValue;
 
         AssertNullOrEmptyError(flight, nameof(Flight.DepartureAirport));
     }
 
-    [Fact]
-    public void DepartureAirport_must_not_be_null()
+    [Theory]
+    [MemberData(nameof(NullOrEmptyStrings))]
+    public void ArrivalAirport_must_not_be_null_or_null(string nullOrEmptyValue)
     {
         // Arrange
         var flight = Any.Flight();
-#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.  Actually, you can, apparently.
-        flight.DepartureAirport = null;
-#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
-
-        AssertNullOrEmptyError(flight, nameof(Flight.DepartureAirport));
-    }
-
-    [Fact]
-    public void ArrivalAirport_must_not_be_empty()
-    {
-        // Arrange
-        var flight = Any.Flight();
-        flight.ArrivalAirport = string.Empty;
+        flight.ArrivalAirport = nullOrEmptyValue;
 
         AssertNullOrEmptyError(flight, nameof(Flight.ArrivalAirport));
     }
 
-    [Fact]
-    public void ArrivalAirport_must_not_be_null()
+    [Theory]
+    [InlineData(-1)]
+    [InlineData(5)]
+    [InlineData(17)]
+    public void Status_must_be_valid(int invalidValue)
     {
         // Arrange
         var flight = Any.Flight();
-#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.  Actually, you can, apparently.
-        flight.ArrivalAirport = null;
-#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
+        flight.Status = (FlightStatus)invalidValue;
+        var request = new UpdateFlightRequest { Flight = flight };
+        var sut = new UpdateFlightValidator();
 
-        AssertNullOrEmptyError(flight, nameof(Flight.ArrivalAirport));
+        // Act
+        var result = sut.Validate(request);
+
+        // Assert
+        Assert.False(result.IsValid);
+        var flightStatusError = result
+            .Errors
+            .FirstOrDefault(e => e.PropertyName == $"{nameof(Flight)}.{nameof(Flight.Status)}");
+        Assert.NotNull(flightStatusError);
     }
 
     private void AssertNullOrEmptyError(Flight flight, string fieldName)
@@ -131,5 +110,31 @@ public class UpdateFlightValidatorTests
         Assert.NotNull(flightIdError);
     }
 
+    [Theory]
+    [InlineData((int)FlightStatus.Scheduled)]
+    [InlineData((int)FlightStatus.Delayed)]
+    [InlineData((int)FlightStatus.Cancelled)]
+    [InlineData((int)FlightStatus.InAir)]
+    [InlineData((int)FlightStatus.Landed)]
+    public void Valid_flights_pass_validation(int statusValue)
+    {
+        // Arrange
+        var flight = Any.Flight();
+        flight.Status = (FlightStatus)statusValue;
+        var request = new UpdateFlightRequest { Flight = flight };
+        var sut = new UpdateFlightValidator();
+
+        // Act
+        var result = sut.Validate(request);
+
+        // Assert
+        Assert.True(result.IsValid);
+    }
+
+    public static IEnumerable<Object?[]> NullOrEmptyStrings()
+    {
+        yield return new[] { string.Empty };
+        yield return new[] { (string?)null };
+    }
 }
 
