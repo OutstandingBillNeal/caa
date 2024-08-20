@@ -42,6 +42,7 @@ builder.Services.AddMediatR(cfg =>
 
 var app = builder.Build();
 
+// Configure these two as desired
 var useSwagger = true || app.Environment.IsDevelopment();
 var useExceptionHandler = true || !app.Environment.IsDevelopment();
 
@@ -51,7 +52,7 @@ if (useSwagger)
     app.UseSwaggerUI();
 }
 
-if (useExceptionHandler && false)
+if (useExceptionHandler)
 {
     app.UseExceptionHandler("/error");
 }

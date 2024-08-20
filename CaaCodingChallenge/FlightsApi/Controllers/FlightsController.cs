@@ -4,6 +4,7 @@ using FluentValidation.Results;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Net.Mime;
 using UnitsOfWork;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -37,28 +38,33 @@ public class FlightsController(
 
     // GET: api/<FlightsController>
     [HttpGet]
+    [ProducesResponseType<IEnumerable<Flight>>(StatusCodes.Status200OK)]
     public async Task<ActionResult<IEnumerable<Flight>>> Get()
     {
         var request = new GetFlightsRequest();
         var result = await _mediator.Send(request, CancellationToken.None);
-        return new JsonResult(result);
+        return new OkObjectResult(result);
     }
 
     // GET api/<FlightsController>/5
     [HttpGet("{id}")]
-    public async Task<ActionResult<Flight>> Get(int id)
+    [ProducesResponseType<Flight>(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<Flight>> GetById(int id)
     {
         var request = new GetFlightByIdRequest { Id = id };
         var result = await _mediator.Send(request, CancellationToken.None);
 
         return result == null
             ? new NotFoundResult()
-            : new JsonResult(result);
+            : new OkObjectResult(result);
     }
 
     // POST api/<FlightsController>
     [HttpPost]
-    public async Task<ActionResult<Flight>> Post([FromBody] Flight value)
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> Post([FromBody] Flight value)
     {
         var request = new CreateFlightRequest { Flight = value };
         var validationResult = await _createFlightValidator.ValidateAsync(request);
@@ -68,14 +74,17 @@ public class FlightsController(
             var message = GetValidationMessage(validationResult);
             return BadRequest(message);
         }
-        
+
         var result = await _mediator.Send(request, CancellationToken.None);
-        return new JsonResult(result);
+        return CreatedAtAction(nameof(Post), new { id = result?.Id }, result);
     }
 
     // PUT api/<FlightsController>/5
     [HttpPut("{id}")]
-    public async Task<ActionResult<Flight>> Put(int id, [FromBody] Flight value)
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> Put(int id, [FromBody] Flight value)
     {
         var request = new UpdateFlightRequest { Flight = value };
         request.Flight.Id = id; // Just to be sure
@@ -90,18 +99,20 @@ public class FlightsController(
         var result = await _mediator.Send(request, CancellationToken.None);
         return result == null
             ? NotFound()
-            : new JsonResult(result);
+            : new OkObjectResult(result);
     }
 
     // DELETE api/<FlightsController>/5
     [HttpDelete("{id}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult> Delete(int id)
     {
         var request = new DeleteFlightRequest { Id = id };
         var result = await _mediator.Send(request);
 
         return result.Success
-            ? Ok(result)
+            ? new NoContentResult()
             : NotFound();
     }
 
