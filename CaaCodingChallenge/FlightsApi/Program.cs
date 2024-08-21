@@ -75,4 +75,4 @@ Log.Logger = new LoggerConfiguration()
 
 Log.Information("Starting");
 
-app.Run();
+await app.RunAsync(CancellationToken.None);

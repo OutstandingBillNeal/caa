@@ -16,7 +16,7 @@ public class DeleteFlightHandlerTests
         var flight = Any.Flight();
         flight.Id = 0;
         dbContext.Flights.Add(flight);
-        dbContext.SaveChanges();
+        await dbContext.SaveChangesAsync(CancellationToken.None);
         // flight.Id will now have a non-zero value
         var sut = new DeleteFlightHandler(factory);
         var request = new DeleteFlightRequest { Id = flight.Id };

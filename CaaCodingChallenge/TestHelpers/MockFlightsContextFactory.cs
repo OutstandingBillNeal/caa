@@ -6,6 +6,8 @@ namespace TestHelpers
 {
     public class MockFlightsContextFactory
     {
+        protected MockFlightsContextFactory() { }
+
         public async static Task<IDbContextFactory<FlightsContext>> GetFlightsContextFactory(FlightsContext context)
         {
             var factory = new Mock<IDbContextFactory<FlightsContext>>();

@@ -81,18 +81,5 @@ namespace FlightsDataTests
             Assert.Equal(updatedFlightNumber, flightRetrievedAfterUpdate.FlightNumber);
         }
 
-        private Flight GetFlight1()
-        {
-            return new Flight
-            {
-                Airline = "airline",
-                ArrivalAirport = "arrival airport",
-                ArrivalTime = DateTimeOffset.Now,
-                DepartureAirport = "departure airport",
-                DepartureTime = DateTimeOffset.Now,
-                FlightNumber = "flight number",
-                Status = FlightStatus.Scheduled
-            };
-        }
     }
 }

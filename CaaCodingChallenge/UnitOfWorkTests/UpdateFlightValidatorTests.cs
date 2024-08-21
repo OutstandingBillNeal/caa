@@ -25,7 +25,7 @@ public class UpdateFlightValidatorTests
         Assert.False(result.IsValid);
         var flightStatusError = result
             .Errors
-            .FirstOrDefault(e => e.PropertyName == $"{nameof(Flight)}.{nameof(Flight.Status)}");
+            .Find(e => e.PropertyName == $"{nameof(Flight)}.{nameof(Flight.Status)}");
         Assert.NotNull(flightStatusError);
     }
 

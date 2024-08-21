@@ -1,5 +1,6 @@
 ﻿using FlightsData;
 using FlightsData.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,13 +23,13 @@ public class UpdateFlightHandlerTests
         var flight = Any.Flight();
         flight.Id = 0;
         dbContext.Flights.Add(flight);
-        dbContext.SaveChanges();
+        await dbContext.SaveChangesAsync(CancellationToken.None);
         var newAirline = Any.String();
         Assert.NotEqual(newAirline, flight.Airline); // check we are changing it
         flight.Airline = newAirline;
         var sut = new UpdateFlightHandler(factory);
         var request = new UpdateFlightRequest { Flight = flight };
-        var numberOfFlightsBefore = dbContext.Flights.Count();
+        var numberOfFlightsBefore = await dbContext.Flights.CountAsync(CancellationToken.None);
 
         // Act
         var result = await sut.Handle(request, CancellationToken.None);
@@ -37,13 +38,17 @@ public class UpdateFlightHandlerTests
         Assert.NotNull(result);
         Assert.Equal(flight, result);
         // Check that we updated in the database
-        var flightAfterUpdate = dbContext.Flights.FirstOrDefault(f => f.Id == flight.Id);
+        var flightAfterUpdate = await dbContext.Flights
+            .FirstOrDefaultAsync(f => f.Id == flight.Id, CancellationToken.None);
         Assert.NotNull(flightAfterUpdate);
         Assert.Equal(newAirline, flightAfterUpdate.Airline);
+        // Check nothing was added or removed
+        var numberOfFlightsAfter = await dbContext.Flights.CountAsync(CancellationToken.None);
+        Assert.Equal(numberOfFlightsBefore, numberOfFlightsAfter);
 
         // Tidy up
         dbContext.Flights.Remove(result);
-        dbContext.SaveChanges();
+        await dbContext.SaveChangesAsync(CancellationToken.None);
     }
 
     [Fact]

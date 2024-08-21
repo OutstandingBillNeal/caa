@@ -22,7 +22,7 @@ namespace UnitOfWorkTests
             Assert.False(result.IsValid);
             var flightIdError = result
                 .Errors
-                .FirstOrDefault(e => e.PropertyName == $"{nameof(Flight)}.{nameof(Flight.Id)}" && e.ErrorMessage.Contains("zero"));
+                .Find(e => e.PropertyName == $"{nameof(Flight)}.{nameof(Flight.Id)}" && e.ErrorMessage.Contains("zero"));
             Assert.NotNull(flightIdError);
         }
 
@@ -46,7 +46,7 @@ namespace UnitOfWorkTests
             Assert.False(result.IsValid);
             var flightStatusError = result
                 .Errors
-                .FirstOrDefault(e => e.PropertyName == $"{nameof(Flight)}.{nameof(Flight.Status)}");
+                .Find(e => e.PropertyName == $"{nameof(Flight)}.{nameof(Flight.Status)}");
             Assert.NotNull(flightStatusError);
         }
 

@@ -16,7 +16,7 @@ public class GetFlightByIdHandlerTests
         var flight = Any.Flight();
         flight.Id = 0;
         dbContext.Flights.Add(flight);
-        dbContext.SaveChanges();
+        await dbContext.SaveChangesAsync(CancellationToken.None);
         // flight.Id will now have a non-zero value
         var sut = new GetFlightByIdHandler(factory);
         var request = new GetFlightByIdRequest { Id = flight.Id };
@@ -31,7 +31,7 @@ public class GetFlightByIdHandlerTests
         // Tidy up
         var flightToRemove = dbContext.Flights.First(f => f.Id == flight.Id);
         dbContext.Flights.Remove(flightToRemove);
-        dbContext.SaveChanges();
+        await dbContext.SaveChangesAsync(CancellationToken.None);
     }
 
     [Fact]

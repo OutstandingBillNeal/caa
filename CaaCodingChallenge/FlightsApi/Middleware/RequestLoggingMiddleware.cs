@@ -15,11 +15,11 @@ public class RequestLoggingMiddleware
     public async Task Invoke(HttpContext context)
     {
         // Log the Request
-        Log.Information($"Request {context.Request?.Method}: {context.Request?.Path.Value}");
+        Log.Information("Request {0}: {1}", context.Request?.Method, context.Request?.Path.Value);
 
         // Read and log the request body data
         string requestBodyPayload = await ReadRequestBody(context);
-        Log.Information($"Request Payload: {requestBodyPayload}");
+        Log.Information("Request Payload: {0}", requestBodyPayload);
 
         // Copy a pointer to the original response body stream
         var originalBodyStream = context.Response.Body;
@@ -36,7 +36,7 @@ public class RequestLoggingMiddleware
             string responseBodyPayload = await new StreamReader(context.Response.Body).ReadToEndAsync();
             context.Response.Body.Seek(0, SeekOrigin.Begin);
 
-            Log.Information($"Response {context.Response?.StatusCode}: {responseBodyPayload}");
+            Log.Information("Response {0}: {1}", context.Response?.StatusCode, responseBodyPayload);
 
             // Copy the contents of the new memory stream (which contains the response) to the original stream, which is then returned to the client.
             await responseBody.CopyToAsync(originalBodyStream);
