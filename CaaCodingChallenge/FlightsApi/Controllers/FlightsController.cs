@@ -74,7 +74,7 @@ public class FlightsController(
         }
 
         var result = await _mediator.Send(request, CancellationToken.None);
-        return CreatedAtAction(nameof(Post), new { id = result?.Id }, result);
+        return CreatedAtAction(nameof(GetById), new { id = result?.Id }, result);
     }
 
     // PUT api/<FlightsController>/5
@@ -118,7 +118,7 @@ public class FlightsController(
     {
         var errorMessages = validationResult
             .Errors
-            .Select(err => $"Property: {err.PropertyName}, error: {err.ErrorMessage}.");
+            .Select(err => $"Property: {err.PropertyName}, error: {err.ErrorMessage}");
         return string.Join(' ', errorMessages);
     }
 }

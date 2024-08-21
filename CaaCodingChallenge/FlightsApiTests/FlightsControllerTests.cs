@@ -135,7 +135,7 @@ public class FlightsControllerTests
         // Assert correct data returned
         Assert.Equal(flight1, returnedFlight);
         // Assert correct location returned
-        Assert.Equal(nameof(FlightsController.Post), createdResult.ActionName);
+        Assert.Equal(nameof(FlightsController.GetById), createdResult.ActionName);
         Assert.NotNull(createdResult.RouteValues);
         // ... and by the time you get down here, where the value to be tested requires several
         // steps of derivation, it becomes less practcal to put each assertion into its own test.
