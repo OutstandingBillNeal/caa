@@ -6,7 +6,7 @@ public static class Any
 {
     public static string String()
     {
-        return Guid.NewGuid().ToString();
+        return Guid.NewGuid().ToString()[..8];
     }
 
     public static int Int()

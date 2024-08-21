@@ -1,5 +1,6 @@
 ﻿using FlightsData;
 using Moq;
+using TestHelpers;
 using UnitsOfWork;
 
 namespace UnitOfWorkTests;
@@ -10,8 +11,9 @@ public class GetFlightsHandlerTests
     public async Task Throws_when_request_is_null()
     {
         // Arrange
-        var dbContextMock = new Mock<IFlightsContext>();
-        var sut = new GetFlightsHandler(dbContextMock.Object);
+        var dbContext = new FlightsContext();
+        var factory = await MockFlightsContextFactory.GetFlightsContextFactory(dbContext);
+        var sut = new GetFlightsHandler(factory);
         GetFlightsRequest? request = null;
 
         // Assert
@@ -25,7 +27,8 @@ public class GetFlightsHandlerTests
     {
         // Arrange
         var dbContext = new FlightsContext();
-        var sut = new GetFlightsHandler(dbContext);
+        var factory = await MockFlightsContextFactory.GetFlightsContextFactory(dbContext);
+        var sut = new GetFlightsHandler(factory);
         var request = new GetFlightsRequest();
         var numberOfFlightsInDb = dbContext.Flights.Count();
 

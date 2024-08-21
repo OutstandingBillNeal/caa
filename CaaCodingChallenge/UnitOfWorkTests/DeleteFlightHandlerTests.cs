@@ -11,13 +11,14 @@ public class DeleteFlightHandlerTests
     {
         // Arrange
         var dbContext = new FlightsContext();
+        var factory = await MockFlightsContextFactory.GetFlightsContextFactory(dbContext);
         // Create a flight, in case none exist yet
         var flight = Any.Flight();
         flight.Id = 0;
         dbContext.Flights.Add(flight);
         dbContext.SaveChanges();
         // flight.Id will now have a non-zero value
-        var sut = new DeleteFlightHandler(dbContext);
+        var sut = new DeleteFlightHandler(factory);
         var request = new DeleteFlightRequest { Id = flight.Id };
         var numberOfFlightsBefore = dbContext.Flights.Count();
 
@@ -38,7 +39,8 @@ public class DeleteFlightHandlerTests
     {
         // Arrange
         var dbContext = new FlightsContext();
-        var sut = new DeleteFlightHandler(dbContext);
+        var factory = await MockFlightsContextFactory.GetFlightsContextFactory(dbContext);
+        var sut = new DeleteFlightHandler(factory);
         var request = new DeleteFlightRequest { Id = int.MaxValue };
         var numberOfFlightsBefore = dbContext.Flights.Count();
 

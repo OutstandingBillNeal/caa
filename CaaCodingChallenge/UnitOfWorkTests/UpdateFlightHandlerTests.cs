@@ -17,6 +17,7 @@ public class UpdateFlightHandlerTests
     {
         // Arrange
         var dbContext = new FlightsContext();
+        var factory = await MockFlightsContextFactory.GetFlightsContextFactory(dbContext);
         // Create a flight, in case none exist yet
         var flight = Any.Flight();
         flight.Id = 0;
@@ -25,7 +26,7 @@ public class UpdateFlightHandlerTests
         var newAirline = Any.String();
         Assert.NotEqual(newAirline, flight.Airline); // check we are changing it
         flight.Airline = newAirline;
-        var sut = new UpdateFlightHandler(dbContext);
+        var sut = new UpdateFlightHandler(factory);
         var request = new UpdateFlightRequest { Flight = flight };
         var numberOfFlightsBefore = dbContext.Flights.Count();
 
@@ -50,7 +51,8 @@ public class UpdateFlightHandlerTests
     {
         // Arrange
         var dbContext = new FlightsContext();
-        var sut = new UpdateFlightHandler(dbContext);
+        var factory = await MockFlightsContextFactory.GetFlightsContextFactory(dbContext);
+        var sut = new UpdateFlightHandler(factory);
         var flight = Any.Flight();
         flight.Id = int.MaxValue;
         var request = new UpdateFlightRequest { Flight = flight };

@@ -6,19 +6,20 @@ using Microsoft.EntityFrameworkCore;
 
 namespace UnitsOfWork;
 
-public class UpdateFlightHandler(IFlightsContext context)
+public class UpdateFlightHandler(IDbContextFactory<FlightsContext> contextFactory)
     : IRequestHandler<UpdateFlightRequest, Flight?>
 {
-    private readonly IFlightsContext _context = context;
+    private readonly IDbContextFactory<FlightsContext> _contextFactory = contextFactory;
 
     public async Task<Flight?> Handle(UpdateFlightRequest request, CancellationToken cancellationToken)
     {
-        Guard.Against.Null(_context);
-        Guard.Against.Null(_context.Flights);
+        Guard.Against.Null(_contextFactory);
         Guard.Against.Null(request);
         Guard.Against.Null(request.Flight);
 
-        var retrievedFlight = await _context
+        var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
+
+        var retrievedFlight = await context
             .Flights
             .FirstOrDefaultAsync(f => f.Id == request.Flight.Id, cancellationToken);
 
@@ -35,8 +36,8 @@ public class UpdateFlightHandler(IFlightsContext context)
         retrievedFlight.ArrivalTime = request.Flight.ArrivalTime;
         retrievedFlight.Status = request.Flight.Status;
 
-        await _context.SaveChangesAsync(cancellationToken);
-        var updatedFlight = await _context
+        await context.SaveChangesAsync(cancellationToken);
+        var updatedFlight = await context
             .Flights
             .FirstOrDefaultAsync(f => f.Id == request.Flight.Id, cancellationToken);
 

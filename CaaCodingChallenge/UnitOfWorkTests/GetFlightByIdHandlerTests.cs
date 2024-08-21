@@ -11,13 +11,14 @@ public class GetFlightByIdHandlerTests
     {
         // Arrange
         var dbContext = new FlightsContext();
+        var factory = await MockFlightsContextFactory.GetFlightsContextFactory(dbContext);
         // Create a flight, in case none exist yet
         var flight = Any.Flight();
         flight.Id = 0;
         dbContext.Flights.Add(flight);
         dbContext.SaveChanges();
         // flight.Id will now have a non-zero value
-        var sut = new GetFlightByIdHandler(dbContext);
+        var sut = new GetFlightByIdHandler(factory);
         var request = new GetFlightByIdRequest { Id = flight.Id };
 
         // Act
@@ -28,7 +29,8 @@ public class GetFlightByIdHandlerTests
         Assert.Equal(flight.Airline, result.Airline);
 
         // Tidy up
-        dbContext.Flights.Remove(result);
+        var flightToRemove = dbContext.Flights.First(f => f.Id == flight.Id);
+        dbContext.Flights.Remove(flightToRemove);
         dbContext.SaveChanges();
     }
 
@@ -37,7 +39,8 @@ public class GetFlightByIdHandlerTests
     {
         // Arrange
         var dbContext = new FlightsContext();
-        var sut = new GetFlightByIdHandler(dbContext);
+        var factory = await MockFlightsContextFactory.GetFlightsContextFactory(dbContext);
+        var sut = new GetFlightByIdHandler(factory);
         var request = new GetFlightByIdRequest { Id = int.MaxValue };
 
         // Act

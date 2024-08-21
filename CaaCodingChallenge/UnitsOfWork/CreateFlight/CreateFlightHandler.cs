@@ -6,21 +6,23 @@ using Microsoft.EntityFrameworkCore;
 
 namespace UnitsOfWork;
 
-public class CreateFlightHandler(IFlightsContext context)
+public class CreateFlightHandler(IDbContextFactory<FlightsContext> contextFactory)
     : IRequestHandler<CreateFlightRequest, Flight?>
 {
-    private readonly IFlightsContext _context = context;
+    private readonly IDbContextFactory<FlightsContext> _contextFactory = contextFactory;
 
     public async Task<Flight?> Handle(CreateFlightRequest request, CancellationToken cancellationToken)
     {
-        Guard.Against.Null(_context);
-        Guard.Against.Null(_context.Flights);
+        Guard.Against.Null(_contextFactory);
         Guard.Against.Null(request);
         Guard.Against.Null(request.Flight);
 
-        _context.Flights.Add(request.Flight);
-        await _context.SaveChangesAsync(cancellationToken);
+        var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
 
-        return await _context.Flights.FirstOrDefaultAsync(f => f.Id == request.Flight.Id, cancellationToken);
+        context.Flights.Add(request.Flight);
+        await context.SaveChangesAsync(cancellationToken);
+
+        return await context.Flights.FirstOrDefaultAsync(f => f.Id == request.Flight.Id, cancellationToken);
+
     }
 }

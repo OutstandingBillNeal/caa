@@ -1,8 +1,8 @@
-using FlightsData;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using UnitsOfWork;
 using TestHelpers;
+using FlightsData;
 
 namespace UnitOfWorkTests;
 
@@ -12,8 +12,9 @@ public class CreateFlightHandlerTests
     public async Task Throws_when_request_is_null()
     {
         // Arrange
-        var dbContextMock = new Mock<IFlightsContext>();
-        var sut = new CreateFlightHandler(dbContextMock.Object);
+        var dbContext = new FlightsContext();
+        var factory = await MockFlightsContextFactory.GetFlightsContextFactory(dbContext);
+        var sut = new CreateFlightHandler(factory);
         CreateFlightRequest? request = null;
 
         // Assert
@@ -27,7 +28,8 @@ public class CreateFlightHandlerTests
     {
         // Arrange
         var dbContext = new FlightsContext();
-        var sut = new CreateFlightHandler(dbContext);
+        var factory = await MockFlightsContextFactory.GetFlightsContextFactory(dbContext);
+        var sut = new CreateFlightHandler(factory);
         var flight = Any.Flight();
         flight.Id = 0;
         var request = new CreateFlightRequest { Flight = flight };

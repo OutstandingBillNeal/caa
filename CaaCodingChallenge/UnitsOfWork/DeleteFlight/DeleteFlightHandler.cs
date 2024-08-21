@@ -5,18 +5,19 @@ using Microsoft.EntityFrameworkCore;
 
 namespace UnitsOfWork;
 
-public class DeleteFlightHandler(IFlightsContext context)
+public class DeleteFlightHandler(IDbContextFactory<FlightsContext> contextFactory)
     : IRequestHandler<DeleteFlightRequest, DeleteFlightResponse>
 {
-    private readonly IFlightsContext _context = context;
+    private readonly IDbContextFactory<FlightsContext> _contextFactory = contextFactory;
 
     public async Task<DeleteFlightResponse> Handle(DeleteFlightRequest request, CancellationToken cancellationToken)
     {
-        Guard.Against.Null(_context);
-        Guard.Against.Null(_context.Flights);
+        Guard.Against.Null(_contextFactory);
         Guard.Against.Null(request);
 
-        var flightToDelete = await _context.Flights.FirstOrDefaultAsync(f => f.Id == request.Id, cancellationToken);
+        var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
+
+        var flightToDelete = await context.Flights.FirstOrDefaultAsync(f => f.Id == request.Id, cancellationToken);
         var result = new DeleteFlightResponse { Success = false };
 
         if (flightToDelete == null) 
@@ -24,8 +25,8 @@ public class DeleteFlightHandler(IFlightsContext context)
             return result;
         }
 
-        _context.Flights.Remove(flightToDelete);
-        await _context.SaveChangesAsync(cancellationToken);
+        context.Flights.Remove(flightToDelete);
+        await context.SaveChangesAsync(cancellationToken);
         result.Success = true;
 
         return result;

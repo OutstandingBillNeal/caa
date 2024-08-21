@@ -10,7 +10,7 @@ using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// adding jwt auth
+// Add JWT authentication
 var jwtIssuer = builder.Configuration["Jwt:Issuer"];
 var jwtKey = builder.Configuration["Jwt:Key"];
 Guard.Against.Null(jwtIssuer);
@@ -35,7 +35,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddSingleton<IFlightsContext, FlightsContext>();
+builder.Services.AddDbContextFactory<FlightsContext>();
 builder.Services.AddValidatorsFromAssemblyContaining<CreateFlightValidator>();
 builder.Services.AddMediatR(cfg =>
 {
