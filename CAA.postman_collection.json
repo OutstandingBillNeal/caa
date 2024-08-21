@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "bc0fd969-e9c0-4979-a9bc-0ff0fe19d61a",
+		"_postman_id": "f172c710-916f-4ab5-84bc-0af7e4fb85ef",
 		"name": "CAA",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "2589148"
+		"_exporter_id": "37787832"
 	},
 	"item": [
 		{
@@ -19,7 +19,7 @@
 							"    pm.expect(jwt).to.not.be.empty;\r",
 							"});\r",
 							"\r",
-							"pm.globals.set(\"caa_jwt\", jwt);\r",
+							"pm.environment.set(\"caa_jwt\", jwt);\r",
 							""
 						],
 						"type": "text/javascript",
@@ -30,7 +30,7 @@
 					"listen": "prerequest",
 					"script": {
 						"exec": [
-							"pm.globals.set(\"base_url\", \"localhost:7135\")"
+							"pm.environment.set(\"base_url\", \"localhost:7135\")"
 						],
 						"type": "text/javascript",
 						"packages": {}
@@ -125,8 +125,8 @@
 							"    pm.expect(pm.response.code).to.eql(200);\r",
 							"});\r",
 							"\r",
-							"pm.test(\"Round trip should take less than 200ms\", () => {\r",
-							"    pm.expect(pm.response.responseTime).to.be.below(200);\r",
+							"pm.test(\"Round trip should take less than 2000ms (there might be a lot of flights)\", () => {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
 							"});"
 						],
 						"type": "text/javascript",
@@ -158,18 +158,14 @@
 			"response": []
 		},
 		{
-			"name": "Get Flight with valid id",
+			"name": "Create invalid flight (id should not be provided)",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
 						"exec": [
-							"pm.test(\"Response code should be 200\", () => {\r",
-							"    pm.expect(pm.response.code).to.eql(200);\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Round trip should take less than 200ms\", () => {\r",
-							"    pm.expect(pm.response.responseTime).to.be.below(200);\r",
+							"pm.test(\"Response code should be 400\", () => {\r",
+							"    pm.expect(pm.response.code).to.eql(400);\r",
 							"});"
 						],
 						"type": "text/javascript",
@@ -177,32 +173,6 @@
 					}
 				}
 			],
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "Bearer {{caa_jwt}}",
-						"type": "text"
-					}
-				],
-				"url": {
-					"raw": "https://{{base_url}}/api/flights/11",
-					"protocol": "https",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"api",
-						"flights",
-						"11"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Create Flight",
 			"request": {
 				"method": "POST",
 				"header": [
@@ -214,7 +184,76 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"id\": 1,\r\n    \"flightNumber\": \"a123\",\r\n    \"airline\": \"airline for a flight created in Postman\",\r\n    \"departureAirport\": \"c\",\r\n    \"arrivalAirport\": \"b\",\r\n    \"departureTime\": \"2024-08-17T12:11:44.5419434+12:00\",\r\n    \"arrivalTime\": \"2024-08-17T12:11:44.5418486+12:00\",\r\n    \"status\": 0\r\n}\r\n",
+					"raw": "{\r\n    \"id\": 1,\r\n    \"flightNumber\": \"a123\",\r\n    \"airline\": \"airline for a flight created in Postman\",\r\n    \"departureAirport\": \"c\",\r\n    \"arrivalAirport\": \"b\",\r\n    \"departureTime\": \"2024-08-17T12:11:44.5419434+12:00\",\r\n    \"arrivalTime\": \"2024-08-17T12:11:44.5418486+12:00\",\r\n    \"status\": 0\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://{{base_url}}/api/flights",
+					"protocol": "https",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"flights"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create valid Flight",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response code should be 201\", () => {\r",
+							"    pm.expect(pm.response.code).to.eql(201);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Round trip should take less than 200ms\", () => {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response should contain Location header\", () => {\r",
+							"    pm.expect(pm.response.headers[\"Location\"]).to.not.be.null;\r",
+							"});\r",
+							"\r",
+							"// Save the location, because we'll need it later\r",
+							"pm.environment.set(\"created_flight\", pm.response.headers.get(\"Location\"));"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{caa_jwt}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"flightNumber\": \"a123\",\r\n    \"airline\": \"airline for a flight created in Postman\",\r\n    \"departureAirport\": \"c\",\r\n    \"arrivalAirport\": \"b\",\r\n    \"departureTime\": \"2024-08-17T12:11:44.5419434+12:00\",\r\n    \"arrivalTime\": \"2024-08-17T12:11:44.5418486+12:00\",\r\n    \"status\": 0\r\n}\r\n",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -265,7 +304,7 @@
 					}
 				],
 				"url": {
-					"raw": "https://{{base_url}}/api/flights/1111111",
+					"raw": "https://{{base_url}}/api/flights/0",
 					"protocol": "https",
 					"host": [
 						"{{base_url}}"
@@ -273,7 +312,7 @@
 					"path": [
 						"api",
 						"flights",
-						"1111111"
+						"0"
 					],
 					"query": [
 						{
@@ -287,7 +326,206 @@
 			"response": []
 		},
 		{
-			"name": "Update Flight",
+			"name": "Get Flight with valid id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response code should be 200\", () => {\r",
+							"    pm.expect(pm.response.code).to.eql(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Round trip should take less than 200ms\", () => {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(200);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{caa_jwt}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{created_flight}}",
+					"host": [
+						"{{created_flight}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update non-existing flight",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response code should be 404\", () => {\r",
+							"    pm.expect(pm.response.code).to.eql(404);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{caa_jwt}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"flightNumber\": \"flight11\",\r\n    \"airline\": \"airline for a flight updated in Postman\",\r\n    \"departureAirport\": \"departureAirport for a flight updated in Postman\",\r\n    \"arrivalAirport\": \"arrivalAirport for a flight updated in Postman\",\r\n    \"departureTime\": \"2024-08-17T12:11:44.5419434+12:00\",\r\n    \"arrivalTime\": \"2024-08-17T12:11:44.5418486+12:00\",\r\n    \"status\": 0\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://{{base_url}}/api/flights/0",
+					"protocol": "https",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"flights",
+						"0"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update existing flight with required fields missing",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response code should be 400\", () => {\r",
+							"    pm.expect(pm.response.code).to.eql(400);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Round trip should take less than 200ms\", () => {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(200);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{caa_jwt}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"flightNumber\": \"flight12\",\r\n    \"airline\": \"\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{created_flight}}",
+					"host": [
+						"{{created_flight}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update existing flight with invalid details",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response code should be 400\", () => {\r",
+							"    pm.expect(pm.response.code).to.eql(400);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Round trip should take less than 200ms\", () => {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(200);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{caa_jwt}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"flightNumber\": \"flight11\",\r\n    \"airline\": \"\",\r\n    \"departureAirport\": \"departureAirport for a flight updated in Postman\",\r\n    \"arrivalAirport\": \"arrivalAirport for a flight updated in Postman\",\r\n    \"departureTime\": \"2024-08-17T12:11:44.5419434+12:00\",\r\n    \"arrivalTime\": \"2024-08-17T12:11:44.5418486+12:00\",\r\n    \"status\": 27\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{created_flight}}",
+					"host": [
+						"{{created_flight}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update existing Flight with valid details",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response code should be 200\", () => {\r",
+							"    pm.expect(pm.response.code).to.eql(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Round trip should take less than 200ms\", () => {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(200);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
 			"request": {
 				"method": "PUT",
 				"header": [
@@ -307,7 +545,41 @@
 					}
 				},
 				"url": {
-					"raw": "https://{{base_url}}/api/flights/11",
+					"raw": "{{created_flight}}",
+					"host": [
+						"{{created_flight}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete a non-existent flight",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response code should be 404\", () => {\r",
+							"    pm.expect(pm.response.code).to.eql(404);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{caa_jwt}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://{{base_url}}/api/flights/0",
 					"protocol": "https",
 					"host": [
 						"{{base_url}}"
@@ -315,7 +587,48 @@
 					"path": [
 						"api",
 						"flights",
-						"11"
+						"0"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete flight",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response code should be 204\", () => {\r",
+							"    pm.expect(pm.response.code).to.eql(204);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{caa_jwt}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{created_flight}}",
+					"host": [
+						"{{created_flight}}"
+					],
+					"query": [
+						{
+							"key": "",
+							"value": "",
+							"disabled": true
+						}
 					]
 				}
 			},
